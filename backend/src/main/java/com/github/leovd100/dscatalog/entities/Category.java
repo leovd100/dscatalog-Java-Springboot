@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.github.leovd100.dscatalog.dto.CategoryDto;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +32,10 @@ public class Category implements Serializable {
 	
 	public Category() {
 		
+	}
+	
+	public Category(CategoryDto dto) {
+		this.name = dto.getName();
 	}
 	
 	public Category(Long id, String name) {
