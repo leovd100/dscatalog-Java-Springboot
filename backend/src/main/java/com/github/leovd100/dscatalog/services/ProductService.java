@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.leovd100.dscatalog.dto.ProductDto;
+import com.github.leovd100.dscatalog.entities.Category;
 import com.github.leovd100.dscatalog.entities.Product;
+import com.github.leovd100.dscatalog.repositories.CategoryRepository;
 import com.github.leovd100.dscatalog.repositories.ProductRepository;
 import com.github.leovd100.dscatalog.services.exceptions.DataBaseException;
 import com.github.leovd100.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -24,7 +26,10 @@ import com.github.leovd100.dscatalog.services.exceptions.ResourceNotFoundExcepti
 public class ProductService {
 	
 	@Autowired
-	public ProductRepository repository;
+	private ProductRepository repository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	@Transactional(readOnly = true)
 	public List<ProductDto> findAll(){
@@ -48,6 +53,7 @@ public class ProductService {
 	@Transactional
 	public ProductDto insert(ProductDto dto) {
 		Product entity = new Product();
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
 		return new ProductDto(entity);
 	}
@@ -57,6 +63,7 @@ public class ProductService {
 		try {
 			Product entity = repository.getOne(id); 
 			//entity.setName(dto.getName());
+			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new ProductDto(entity);
 		}catch(EntityNotFoundException e ) {
@@ -64,6 +71,7 @@ public class ProductService {
 		}
 	}
 
+	
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);
@@ -74,6 +82,22 @@ public class ProductService {
 		}
 	}
 
+	private void copyDtoToEntity(ProductDto dto, Product entity) {
+		// TODO Auto-generated method stub
+		entity.setDate(dto.getDate());
+		entity.setDescription(dto.getDescription());
+		entity.setImgUrl(dto.getImgUrl());
+		entity.setName(dto.getName());
+		entity.setPrice(dto.getPrice());
+		
+		entity.getCategories().clear();
+		
+		dto.getCategories().stream().forEach(e -> {
+			Category category = categoryRepository.getOne(e.getId());
+			entity.getCategories().add(category);
+		});
+		
+	}
 
 	
 }
