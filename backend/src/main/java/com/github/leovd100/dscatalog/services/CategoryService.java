@@ -9,6 +9,8 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,12 @@ public class CategoryService {
 	public List<CategoryDto> findAll(){
 		 List<Category> categories = repository.findAll();
 		 return categories.stream().map(element -> new CategoryDto(element)).collect(Collectors.toList());
+	}
+	
+	@Transactional(readOnly = true)
+	public Page<CategoryDto> findAll(PageRequest pageRequest){
+		 Page<Category> categories = repository.findAll(pageRequest);
+		 return categories.map(element -> new CategoryDto(element));
 	}
 	
 	@Transactional(readOnly = true)
@@ -64,4 +72,7 @@ public class CategoryService {
 			throw new DataBaseException("Integrity Violation");
 		}
 	}
+
+
+	
 }
