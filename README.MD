@@ -34,6 +34,8 @@ O projeto foi desenvolvido utilizando:
 - Dados de auditoria
 - Paginação de dados
 - Associações entre entidades (N-N)
+- Testes automatizados
+- Testes unitários
 
 ---
 
@@ -59,9 +61,8 @@ GET:
 - Parâmetros passados no GET (Apenas findAll):
 
   - page
-  - linesPerPage
-  - direction
-  - orderBy
+  - siza
+  - sort
 
 `Busca por id:`
 
@@ -103,10 +104,10 @@ PUT:
         }
 
 - /category/{id}
-        Body:
-        {
-            "name" : "new name"
-        }
+  Body:
+  {
+  "name" : "new name"
+  }
 
 ---
 
@@ -114,3 +115,9 @@ DELETE:
 
 - /products/{id}
 - /category/{id}
+
+---
+
+Testes:
+
+- Testes de repository
