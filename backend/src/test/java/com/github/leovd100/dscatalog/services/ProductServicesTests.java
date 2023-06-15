@@ -18,7 +18,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -44,6 +46,7 @@ public class ProductServicesTests {
 	private Long dependentId;
 	private PageImpl<Product> page;
 	private Product product;
+	
 	@BeforeEach
 	void setUp() throws Exception {
 		existId = 1L;
@@ -64,6 +67,14 @@ public class ProductServicesTests {
 		doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
 	}
 	
+	@Test
+	public void findAllPagedShouldReturnPage() {
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<ProductDto> result = service.findAll(pageable);
+		
+		Assertions.assertNotNull(result);
+		verify(repository, times(1)).findAll(pageable);
+	}
 	
 	@Test
 	public void deleteShouldThrowDataBaseExceptionWhenIdExist() {
