@@ -12,7 +12,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import com.github.leovd100.dscatalog.entities.Product;
 import com.github.leovd100.dscatalog.tests.Factory;
 
+import lombok.extern.slf4j.Slf4j;
+
 @DataJpaTest
+@Slf4j
 public class ProductRepositoryTests {
 	
 	@Autowired

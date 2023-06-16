@@ -120,4 +120,5 @@ DELETE:
 
 Testes:
 
-- Testes de repository
+- Testes de repositório
+- Testes unitários
