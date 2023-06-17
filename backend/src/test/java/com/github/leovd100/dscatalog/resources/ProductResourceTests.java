@@ -2,8 +2,12 @@ package com.github.leovd100.dscatalog.resources;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.leovd100.dscatalog.dto.ProductDto;
 import com.github.leovd100.dscatalog.services.ProductService;
+import com.github.leovd100.dscatalog.services.exceptions.DataBaseException;
 import com.github.leovd100.dscatalog.services.exceptions.ResourceNotFoundException;
 import com.github.leovd100.dscatalog.tests.Factory;
 
@@ -42,10 +47,12 @@ public class ProductResourceTests {
 	private ProductDto productDto;
 	private Long existId;
 	private Long nonExistId;
+	private Long dependentId;
 	@BeforeEach
 	void setUp() throws Exception {
 		existId = 1L;
 		nonExistId = 2L;
+		dependentId = 3L;
 		
 		productDto = Factory.createProductDto();
 		page = new PageImpl<>(List.of(productDto));
@@ -58,7 +65,56 @@ public class ProductResourceTests {
 		when(service.update(eq(existId), any())).thenReturn(productDto);
 		when(service.update(eq(nonExistId), any())).thenThrow(ResourceNotFoundException.class);
 
+		when(service.insert(any())).thenReturn(productDto);
+		
+		//Void
+		doNothing().when(service).delete(existId);
+		doThrow(ResourceNotFoundException.class).when(service).delete(nonExistId);
+		doThrow(DataBaseException.class).when(service).delete(dependentId);
 	}
+	
+	
+	@Test
+	public void insertShouldInsertObject() throws Exception{
+		String jsonBody = objectMapper.writeValueAsString(productDto);
+		
+		ResultActions result = mockMvc.perform(post("/products")
+				.content(jsonBody)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isCreated());
+		result.andExpect(jsonPath("$.id").exists());
+		result.andExpect(jsonPath("$.name").exists());
+	}
+	
+	
+	@Test
+	public void deleteShouldDeleteObjectWhenIdExists() throws Exception{
+		ResultActions result = mockMvc.perform(delete("/products/{id}", existId)
+				.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isNoContent());
+	}
+	
+	
+	@Test
+	public void deleteShoulThrowNotFoundWhenIdDoesNotExists() throws Exception{
+		ResultActions result = mockMvc.perform(delete("/products/{id}", nonExistId)
+				.accept(MediaType.APPLICATION_JSON));
+		result.andExpect(status().isNotFound());
+	}
+	
+	
+
+	@Test
+	public void deleteShoulThrowDataBaseExceptionWhenIdIsDependent() throws Exception{
+		ResultActions result = mockMvc.perform(delete("/products/{id}", dependentId)
+				.accept(MediaType.APPLICATION_JSON));
+		result.andExpect(status().isBadRequest());
+	}
+	
+	
 	
 	@Test
 	public void updateShouldReturnProductDtoWhenIdExists() throws Exception{
