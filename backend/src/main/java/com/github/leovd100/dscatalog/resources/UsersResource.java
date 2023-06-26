@@ -4,6 +4,8 @@ package com.github.leovd100.dscatalog.resources;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +53,7 @@ public class UsersResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDto> insert(@RequestBody UserInsertDto dto){
+	public ResponseEntity<UserDto> insert(@Valid @RequestBody UserInsertDto dto){
 		UserDto newDto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
@@ -61,7 +63,7 @@ public class UsersResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody UserDto dto){
+	public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @Valid @RequestBody UserDto dto){
 		dto = service.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
