@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.leovd100.dscatalog.dto.UserDto;
 import com.github.leovd100.dscatalog.dto.UserInsertDTO;
+import com.github.leovd100.dscatalog.dto.UserUpdateDTO;
 import com.github.leovd100.dscatalog.services.UserService;
 
 
@@ -63,9 +64,9 @@ public class UsersResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @Valid @RequestBody UserDto dto){
-		dto = service.update(id, dto);
-		return ResponseEntity.ok().body(dto);
+	public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @Valid @RequestBody UserUpdateDTO  dto){
+		UserDto newdto = service.update(id, dto);
+		return ResponseEntity.ok().body(newdto);
 	}
 	
 	@DeleteMapping(value = "/{id}")

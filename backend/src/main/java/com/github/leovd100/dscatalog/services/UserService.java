@@ -17,10 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.leovd100.dscatalog.dto.UserDto;
 import com.github.leovd100.dscatalog.dto.UserInsertDTO;
-import com.github.leovd100.dscatalog.entities.Category;
+import com.github.leovd100.dscatalog.dto.UserUpdateDTO;
 import com.github.leovd100.dscatalog.entities.Role;
 import com.github.leovd100.dscatalog.entities.User;
-import com.github.leovd100.dscatalog.repositories.CategoryRepository;
 import com.github.leovd100.dscatalog.repositories.RoleRepository;
 import com.github.leovd100.dscatalog.repositories.UserRepository;
 import com.github.leovd100.dscatalog.services.exceptions.DataBaseException;
@@ -67,7 +66,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserDto update(Long id, UserDto dto) {
+	public UserDto update(Long id, UserUpdateDTO dto) {
 		try {
 			User entity = repository.getOne(id); 
 			copyDtoToEntity(dto, entity);
