@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.leovd100.dscatalog.dto.UserDto;
-import com.github.leovd100.dscatalog.dto.UserInsertDto;
+import com.github.leovd100.dscatalog.dto.UserInsertDTO;
 import com.github.leovd100.dscatalog.services.UserService;
 
 
@@ -53,7 +53,7 @@ public class UsersResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDto> insert(@Valid @RequestBody UserInsertDto dto){
+	public ResponseEntity<UserDto> insert(@Valid @RequestBody UserInsertDTO dto){
 		UserDto newDto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()

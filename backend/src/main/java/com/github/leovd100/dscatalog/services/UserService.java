@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.leovd100.dscatalog.dto.UserDto;
-import com.github.leovd100.dscatalog.dto.UserInsertDto;
+import com.github.leovd100.dscatalog.dto.UserInsertDTO;
 import com.github.leovd100.dscatalog.entities.Category;
 import com.github.leovd100.dscatalog.entities.Role;
 import com.github.leovd100.dscatalog.entities.User;
@@ -58,7 +58,7 @@ public class UserService {
 	}
 	
 	@Transactional
-	public UserDto insert(UserInsertDto dto) {
+	public UserDto insert(UserInsertDTO dto) {
 		User entity = new User();
 		copyDtoToEntity(dto, entity);
 		entity.setPassword(crypt.encode(dto.getPassword()));
