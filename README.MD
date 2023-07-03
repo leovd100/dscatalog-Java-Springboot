@@ -36,6 +36,14 @@ O projeto foi desenvolvido utilizando:
 - Associações entre entidades (N-N)
 - Testes automatizados
 - Testes unitários
+- Validação e segurança:
+  - Modelo de dados de usuários e perfis
+  - Validação com Bean Validation
+    - Annotations
+    - Customização de respostas HTTP
+    - Validação personalizada com acesso a banco de dados
+  - Autenticação e autorização
+    - Spring Security
 
 ---
 
