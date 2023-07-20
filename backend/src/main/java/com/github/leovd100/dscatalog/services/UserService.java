@@ -6,17 +6,22 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import com.github.leovd100.dscatalog.dto.UserInsertDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.leovd100.dscatalog.dto.UserDto;
-import com.github.leovd100.dscatalog.dto.UserInsertDTO;
 import com.github.leovd100.dscatalog.dto.UserUpdateDTO;
 import com.github.leovd100.dscatalog.entities.Role;
 import com.github.leovd100.dscatalog.entities.User;
@@ -26,8 +31,11 @@ import com.github.leovd100.dscatalog.services.exceptions.DataBaseException;
 import com.github.leovd100.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class UserService {
-	
+public class UserService implements UserDetailsService {
+
+
+	private static Logger logger = LoggerFactory.getLogger(UserService.class);
+
 	@Autowired
 	private UserRepository repository;
 	
@@ -57,7 +65,7 @@ public class UserService {
 	}
 	
 	@Transactional
-	public UserDto insert(UserInsertDTO dto) {
+	public UserDto insert(UserInsertDto dto) {
 		User entity = new User();
 		copyDtoToEntity(dto, entity);
 		entity.setPassword(crypt.encode(dto.getPassword()));
@@ -104,5 +112,16 @@ public class UserService {
 		
 	}
 
-	
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = repository.findByEmail(username);
+		if(user == null){
+			logger.error("User not found: " + username);
+			throw new UsernameNotFoundException("Email not found");
+		}
+
+		logger.info("User found: " + username);
+		return user;
+	}
 }
